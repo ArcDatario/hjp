@@ -1,0 +1,904 @@
+<?php 
+session_start();
+
+?>
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>Dashboard - Atrana</title>
+
+	<!-- Bootstrap CSS-->
+	<link rel="stylesheet" href="assets/modules/bootstrap-5.1.3/css/bootstrap.css">
+	<!-- Style CSS -->
+	<link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/buttons.css">
+	<!-- FontAwesome CSS-->
+	<link rel="stylesheet" href="assets/modules/fontawesome6.1.1/css/all.css">
+	<!-- Boxicons CSS-->
+	<link rel="stylesheet" href="assets/modules/boxicons/css/boxicons.min.css">
+	<!-- Apexcharts  CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<link rel="stylesheet" href="assets/modules/apexcharts/apexcharts.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+    
+.generate_btn {
+    border: none;
+    width: 10em;
+    height: 3em;
+    border-radius: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    background:  #25396f;
+    cursor: pointer;
+    transition: all 450ms ease-in-out;
+    margin-left:15%;
+  }
+  
+  .sparkle {
+    fill: #AAAAAA;
+    transition: all 800ms ease;
+  }
+  
+  .text {
+    font-weight: 600;
+    color: #AAAAAA;
+    font-size: medium;
+  }
+  
+  .generate_btn:hover {
+    background: linear-gradient(0deg,#A47CF3,#683FEA);
+    box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+    0px 0px 180px 0px #9917FF;
+    transform: translateY(-2px);
+  }
+  
+  .generate_btn:hover .text {
+    color: white;
+  }
+  
+  .generate_btn:hover .sparkle {
+    fill: white;
+    transform: scale(1.2);
+  } 
+
+  #admins-list {
+            display: block; /* Initially, show the admins list */
+        }
+        <?php if ($_SESSION['role'] === 'Staff'): ?>
+            #admins-list {
+                display: none; /* Hide the admins list if role is staff */
+            }
+        <?php endif; ?>
+</style>
+</head>
+<body>
+
+  <!--Topbar -->
+  <div class="topbar transition">
+	<div class="bars">
+		<button type="button" class="btn transition" id="sidebar-toggle">
+			<i class="fa fa-bars"></i>
+		</button>
+	</div>
+		<div class="menu">
+			<ul>
+				<li class="nav-item dropdown dropdown-list-toggle">
+                <?php include "admin-profile.php";?>
+			</ul>
+		</div>
+	</div>
+
+    <div class="sidebar transition overlay-scrollbars animate__animated  animate__slideInLeft">
+        <div class="sidebar-content"> 
+        	<div id="sidebar">
+			
+			
+			<div class="logo">
+					<h2 class="mb-0"><img src="assets/images/logo.png"> HjP</h2>
+			</div>
+
+            <ul class="side-menu">
+                <li>
+					<a href="index.php">
+						<i class='bx bxs-dashboard icon' ></i> Dashboard
+					</a>
+				</li>
+
+				
+                <li class="divider" data-text="STARTER">Equipments Rent</li>
+				
+				<li>
+					<a href="rent_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Pending Lists<span style='margin-left:7%;' class='badge bg-danger notif' id='pendingCount'></span>
+					</a>
+				</li>
+
+
+				<li>
+					<a href="approve_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Approved Lists<span style='margin-left:7%;' class='badge bg-danger notif' id='approvedCount'></span>
+					</a>
+				</li>
+
+				<li>
+					<a href="paid_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Paid Lists<span style='margin-left:7%;' class='badge bg-danger notif' id='paidCount'></span>
+					</a>
+				</li>
+
+				<li>
+					<a href="completed_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Completed
+					</a>
+				</li>
+
+				<li>
+					<a href="cancelled_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Cancelled Lists
+					</a>
+				</li>
+
+				
+				<li class="divider" data-text="Atrana">Orders</li>
+
+				<li>
+					<a href="pending_orders.php">
+					<i class='bx bx-list-ul icon'></i>
+						Pending orders<span style='margin-left:7%;' class='badge bg-danger notif' id='pendingOrdersCount'></span>
+					</a>
+				</li>
+
+				<li>
+					<a href="prepaired_orders.php" >
+					<i class='bx bx-list-ul icon'></i>
+						Prepaired orders<span style='margin-left:7%;' class='badge bg-danger notif' id='prepairingOrdersCount'></span>
+					</a>
+				</li>
+				<li>
+					<a href="on_delivery_orders.php" >
+					<i class='bx bx-list-ul icon'></i>
+						On Delivery orders<span style='margin-left:7%;' class='badge bg-danger notif' id='onDeliveryOrdersCount'></span>
+					</a>
+				</li>
+
+				<li>
+					<a href="completed_orders.php" >
+					<i class='bx bx-list-ul icon'></i>
+						Completed Orders
+					</a>
+				</li>
+				<li>
+					<a href="cancelled_orders.php">
+					<i class='bx bx-list-ul icon'></i>
+						Cancelled Orders
+					</a>
+				</li>
+
+				<li class="divider" data-text="Atrana">Equipments & Aggregates</li>
+				<li>
+					<a href="equipment_list.php"  class="active">
+					<i class='bx bx-list-ul icon'></i>
+						Equipment Lists
+					</a>
+				</li>
+
+				<li>
+					<a href="sand_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Sand  Lists
+					</a>
+				</li>
+
+                <div id="admins-list">
+				<li class="divider" data-text="Atrana">Admins List</li>
+				<li>
+					<a href="admins_list.php">
+					<i class='bx bx-list-ul icon'></i>
+						Admin's Accounts
+					</a>
+				</li>
+				</div>
+
+
+				<li class="divider" data-text="Pages">Pages</li>
+
+                <li>
+                    <a href="#">
+						<i class='bx bxs-user icon' ></i> 
+						Account 
+						<i class='bx bx-chevron-right icon-right' ></i>
+					</a>
+
+                    <ul class="side-dropdown">
+                        <li><a href="my-profile.php">My Profile</a></li>
+                        <li><a href="auth-reset-password.php">Reset Password</a></li>
+						<li><a href="logout.php">Logout</a></li>
+                    </ul>
+                </li>
+              <br><br>
+			
+
+			
+
+
+            </ul>
+			
+        </div>
+
+       </div> 
+	 </div>
+    </div>
+
+	<?php include "generate_report_modal.php";?>
+
+	<div class="sidebar-overlay"></div>
+
+
+	<!--Content Start-->
+	<div class="content-start transition">
+		<div class="container-fluid dashboard">
+			<div class="content-header">
+				<h1>Dashboard</h1>
+				<p></p>
+			</div>
+			
+			<div class="row">
+
+				
+
+		
+				
+				
+				
+
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header">
+							<h4>Equipment Lists</h4>
+                            
+<button class="button .add_btn" id="add_button" type="button">
+  <span class="button__text">Add</span>
+  <span class="button__icon"><svg class="svg" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></span>
+</button>
+						</div>
+						<div class="card-body"> 
+						<div class="table-responsive"> 
+						<table class="table table-striped">
+							<thead>
+							  <tr>
+								<th scope="col">Image</th>
+								<th scope="col">Equipment</th>
+								<th scope="col">Year Model</th>
+                                <th scope="col">Rate / Day</th>
+								<th scope="col">Capacity</th>
+								<th scope="col">Fuel</th>
+								<th scope="col">Km/liter</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Category</th>
+								<th scope="col">Actions</th>
+							  </tr>
+							</thead>
+							<tbody id="equipment-tbl">
+                            <?php
+
+include "conn.php";
+
+
+$sql = "SELECT * FROM equipment_tbl order by id desc";
+$result = $conn->query($sql);
+$i=1;
+if ($result->num_rows > 0) {
+while ($row = $result->fetch_assoc()) {
+?>
+
+							<tr>
+								<th scope="row"><img src="functions/equipment_images/<?php echo $row['image']; ?>" height="60" width="80" style="border-radius:10%;"></th>
+								<th scope="row"><?php echo $row['equipment']; ?></th>
+								<td><?php echo $row['year_model']; ?></td>
+								<td>₱<?php echo $row['rate_per_day']; ?></td>
+								<td><?php echo $row['capacity']; ?></td>
+								<td><?php echo $row['fuel']; ?></td>
+                                <td><?php echo $row['kmperliter']; ?>km/liter</td>
+                                <td><?php echo $row['type']; ?></td>
+                                <td><?php echo $row['category']; ?></td>
+								                <td>
+                                        <button class="btn edit-btn" id="edit_btn"  data-id="<?php echo $row['id']; ?>" style="background-color:#081A51 !important; color:white !important;">
+                                          <i class='bx bxs-edit'></i>
+                                        </button>
+
+                                    <button class="btn" id="delete_btn" data-id="<?php echo $row['id']; ?>" style="background-color:#F22F31 !important; color:white !important;"><i class='bx bx-trash'></i></button>
+                                </td>
+							</tr>
+                              <?php
+    }
+} else {
+?>
+        <tr>
+            <td colspan="4">No data found</td>
+        </tr>
+<?php
+}
+
+?>  
+
+<img src="" alt="">
+							  
+							</tbody>
+						  </table>
+						  </div>
+						</div>
+					</div>
+				</div>
+
+		   </div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+	<!-- Footer -->				
+	<footer>
+		<div class="footer">
+			<div class="float-start">
+				<p>2024 &copy; Rental</p>
+			</div>
+				<div class="float-end">
+					<p>Crafted with 
+						<span class="text-danger">
+							<i class="fa fa-heart"></i> by 
+							<a href="https://www.facebook.com/mindorostateuccs" class="author-footer">BSIT</a>
+						</span> 
+					</p>
+			</div>
+		</div>
+	</footer>
+
+
+	<!-- Preloader -->
+	<div class="loader">
+		<div class="spinner-border text-light" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
+	</div>
+	
+	<!-- Loader -->
+	<div class="loader-overlay"></div>
+
+	<!-- General JS Scripts -->
+	<script src="assets/js/atrana.js"></script>
+
+	<!-- JS Libraies -->
+	<script src="assets/modules/jquery/jquery.min.js"></script>
+	<script src="assets/modules/bootstrap-5.1.3/js/bootstrap.bundle.min.js"></script>
+	<script src="assets/modules/popper/popper.min.js"></script>
+
+	<!-- Chart Js -->
+	<script src="assets/modules/apexcharts/apexcharts.js"></script>
+	<script src="assets/js/ui-apexcharts.js"></script>
+
+    <!-- Template JS File -->
+	<script src="assets/js/script.js"></script>
+	<script src="assets/js/custom.js"></script>
+
+  
+
+
+
+
+    <script>
+      document.getElementById('add_button').addEventListener('click', function() {
+    let currentYear = new Date().getFullYear();
+    let options = '<option value="" disabled selected hidden>Year Model</option>';
+    for (let year = currentYear; year >= 2000; year--) {
+        options += `<option value="${year}">${year}</option>`;
+    }
+    Swal.fire({
+        title: 'Add Item',
+        html: `
+        <form  method="post" enctype="multipart/form-data" id="insert_form">
+          <div class="form-group">
+            <label for="equipment" class="col-form-label">Equipment</label>
+            <input type="text" class="form-control" id="equipment" name="equipment" >
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="year_model" class="col-form-label">Year Model</label>
+                    <select class="form-control" id="year_model" name="year_model">
+                        ${options}
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="capacity" class="col-form-label">Capacity (Person)</label>
+                    <select class="form-control" id="capacity" name="capacity">
+                        <option value="" disabled selected hidden>Choose Capacity..</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fuel" class="col-form-label">Fuel</label>
+                    <select class="form-control" id="fuel" name="fuel">
+                        <option disabled selected hidden>Fuel Type</option>
+                        <option value="Unleaded">Unleaded</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="kmpl" class="col-form-label">Km per Liter</label>
+                    <input type="number" class="form-control" id="kmpl" placeholder="8 km" name="kmperliter">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="type" class="col-form-label">Equipment Type</label>
+                    <select class="form-control" id="type" name="type">
+                        <option disabled selected hidden>Type</option>
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="category" class="col-form-label">Equipment Category</label>
+                    <select class="form-control" id="category" name="category">
+                        <option disabled selected hidden>Category</option>
+                        <option value="Loaders">Loaders</option>
+                        <option value="Backhoes">Backhoes</option>
+                        <option value="Bulldozers">Bulldozers</option>
+                        <option value="Excavators">Excavators</option>
+                        <option value="Trenchers">Trenchers</option>
+                        <option value="Compactors">Compactors</option>
+                        <option value="Mixers">Mixers</option>
+                        <option value="Dump Trucks">Dump Trucks</option>
+                        <option value="Forwarder">Forwarder</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="rate_category" class="col-form-label">Rate Category</label>
+                    <select class="form-control" id="rate_category" name="rate_category">
+                        <option disabled selected hidden>Select rate category</option>
+                        <option value="perDay">Per Day</option>
+                       
+                        <option value="perLoad">Per Load</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="equipment_qty" class="col-form-label">Equipmetn Qty</label>
+                    <input type="number" class="form-control" id="equipment_qty" placeholder="8 km" name="equipment_qty">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="rpd" class="col-form-label">Rate per Day (₱)</label>
+            <input type="number" class="form-control" id="rpd" name="rate_per_day">
+        </div>
+
+        <div class="form-group">
+            <label for="image" class="col-form-label">Equipment Image</label>
+            <input type="file" class="form-control" id="image" accept="image/*" name="image">
+        </div>
+        
+    </form>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Add',
+    cancelButtonText: 'Cancel',
+    focusConfirm: false,
+    preConfirm: function() {
+        var form_data = new FormData(document.getElementById('insert_form'));
+
+        return fetch('functions/insert_equipments.php', {
+            method: 'POST',
+            body: form_data
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.text();
+        })
+        .catch(error => {
+            Swal.showValidationMessage(
+                `Request failed: ${error}`
+            );
+        });
+    }
+    }).then(result => {
+        if (result.isConfirmed) {
+          const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: "Equipment Added!"
+});
+        }
+    });
+});
+
+
+    </script>
+
+
+
+
+
+
+
+<script>
+
+$(document).on('click', '#edit_btn', function() {
+    var equipmentId = $(this).data('id');
+    
+    // Fetch data of the selected equipment using AJAX
+    $.ajax({
+        url: 'functions/get_equipment_details.php',
+        type: 'GET',
+        data: { id: equipmentId },
+        dataType: 'json',
+        success: function(equipmentDetails) {
+            if (equipmentDetails && Object.keys(equipmentDetails).length > 0) {
+                let currentYear = new Date().getFullYear();
+                let options = '<option value="" disabled hidden>Year Model</option>';
+                for (let year = currentYear; year >= 2000; year--) {
+                    options += `<option value="${year}" ${year == equipmentDetails.year_model ? 'selected' : ''}>${year}</option>`;
+                }
+                $('#edit_year_model').html(options);
+
+                // Populate Swal2 modal with fetched data
+                Swal.fire({
+                    title: 'Edit Item',
+                    html: `
+                    <form method="post" enctype="multipart/form-data" id="edit_form">
+                        <input type="hidden" id="edit_id" name="id" value="${equipmentDetails.id}"> 
+                        <div class="form-group">
+                            <label for="edit_equipment" class="col-form-label">Equipment</label>
+                            <input type="text" value="${equipmentDetails.equipment}" class="form-control" id="edit_equipment" name="equipment" required>
+                        </div>
+                        
+                        <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="year_model" class="col-form-label">Year Model</label>
+                <select class="form-control" id="edit_year_model" name="year_model" >
+                    ${options}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="capacity" class="col-form-label">Capacity (Person)</label>
+                <select class="form-control" id="edit_capacity" name="capacity" >
+                    <option value="" disabled selected hidden>Choose Capacity..</option>
+                    <option value="1" ${equipmentDetails.capacity === '1' ? 'selected' : ''}>1</option>
+                    <option value="2" ${equipmentDetails.capacity === '2' ? 'selected' : ''}>2</option>
+                    <option value="3" ${equipmentDetails.capacity === '3' ? 'selected' : ''}>3</option>
+                    <option value="4" ${equipmentDetails.capacity === '4' ? 'selected' : ''}>4</option>
+                    <option value="5" ${equipmentDetails.capacity === '5' ? 'selected' : ''}>5</option>
+                    <option value="6" ${equipmentDetails.capacity === '6' ? 'selected' : ''}>6</option>
+                </select>
+            </div>
+        </div>
+    </div>
+                        <!-- Add other input fields for fuel, kmpl, type, category, rate_per_day, and image -->
+                        <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="fuel" class="col-form-label">Fuel</label>
+                <select class="form-control" id="edit_fuel" name="fuel" >
+                    <option disabled selected hidden>Fuel Type</option>
+                    <option value="Unleaded" ${equipmentDetails.fuel === 'Unleaded' ? 'selected' : ''}>Unleaded</option>
+                    <option value="Diesel"    ${equipmentDetails.fuel === 'Diesel' ? 'selected' : ''}>Diesel</option>
+                    <option value="Hybrid"    ${equipmentDetails.fuel === 'Hybrid' ? 'selected' : ''}>Hybrid</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="kmpl" class="col-form-label">Km per Liter</label>
+                <input type="number" class="form-control" id="edit_kmpl" placeholder="8 km" name="kmperliter" value="${equipmentDetails.kmperliter}">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="type" class="col-form-label">Equipment Type</label>
+                <select class="form-control" id="edit_type" name="type" >
+                    <option disabled selected hidden>Type</option>
+                    <option value="Manual" ${equipmentDetails.type === 'Manual' ? 'selected' : ''}>Manual</option>
+                    <option value="Automatic" ${equipmentDetails.type === 'Automatic' ? 'selected' : ''}>Automatic</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="category" class="col-form-label">Equipment Category</label>
+                <select class="form-control" id="edit_category" name="category">
+                    <option disabled selected hidden>Category</option>
+                    <option value="Loaders" ${equipmentDetails.category === 'Loader' ? 'selected' : ''}>Loaders</option>
+                    <option value="Backhoes"${equipmentDetails.category === 'Backhoes' ? 'selected' : ''}>Backhoes</option>
+                    <option value="Bulldozers"${equipmentDetails.category === 'Bulldozers' ? 'selected' : ''}>Bulldozers</option>
+                    <option value="Excavators"${equipmentDetails.category === 'Excavators' ? 'selected' : ''}>Excavators</option>
+                    <option value="Trenchers" ${equipmentDetails.category === 'Trenchers' ? 'selected' : ''}>Trenchers</option>
+                    <option value="Compactors"${equipmentDetails.category === 'Compactors' ? 'selected' : ''}>Compactors</option>
+                    <option value="Mixers"${equipmentDetails.category === 'Mixers' ? 'selected' : ''}>Mixers</option>
+                    <option value="Dump Trucks" ${equipmentDetails.category === 'Dump Trucks' ? 'selected' : ''}>Dump Trucks</option>
+                    <option value="Forwarder"   ${equipmentDetails.category === 'Forwarder' ? 'selected' : ''}>Forwarder</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="rate_category" class="col-form-label">Rate Category</label>
+                    <select class="form-control" id="rate_category" name="rate_category">
+                        <option disabled selected hidden>Select rate category</option>
+                        <option value="perDay" ${equipmentDetails.rate_category === 'perDay' ? 'selected' : ''}>Per Day</option>
+                        <option value="perHour" ${equipmentDetails.rate_category === 'perHour' ? 'selected' : ''}>Per Hour</option>
+                        <option value="perLoad" ${equipmentDetails.rate_category === 'perLoad' ? 'selected' : ''}>Per Load</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="equipment_qty" class="col-form-label">Equipment Qty</label>
+                    <input type="number" class="form-control" id="equipment_qty" placeholder="8 km" name="equipment_qty" value="${equipmentDetails.equipment_qty}">
+                </div>
+            </div>
+        </div>
+                        <div class="form-group">
+                            <label for="edit_rpd" class="col-form-label">Rate per Day (₱)</label>
+                            <input type="number" class="form-control" id="edit_rpd" name="rate_per_day" value="${equipmentDetails.rate_per_day}">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_image" class="col-form-label">Equipment Image</label>
+                            <input type="file" class="form-control" id="edit_image" accept="image/*" name="image">
+                        </div>
+                    </form>`,
+                    confirmButtonText: 'Save',
+                    focusConfirm: false,
+                    preConfirm: function() {
+                        // Handle form submission to update equipment details
+                        var formData = new FormData($('#edit_form')[0]);
+                        formData.append('id', equipmentId); // Append equipment ID to form data
+                      
+                        var formFilled = true;
+    $('#edit_form .form-control[required]').each(function() {
+        if ($(this).val() === '') {
+            formFilled = false;
+            return false; // Break the loop if any required field is empty
+        }
+    });
+
+    // If any required field is empty, display error toast
+    if (!formFilled) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        Toast.fire({
+            icon: "error",
+            title: "Please fill all the fields"
+        });
+        return false; // Prevent form submission
+    }
+                        // Send AJAX request to update data
+                        $.ajax({
+                            url: 'functions/update_equipment.php',
+                            type: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function(response) {
+                                // Display success message
+                                const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: "Updated Successfuly!"
+});
+                            },
+                            error: function(xhr, status, error) {
+                                // Display error message if AJAX request fails
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Failed to update equipment.',
+                                    icon: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                // If equipment details are empty or undefined, display an error message
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to fetch equipment details.',
+                    icon: 'error'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            // Display an error message if AJAX request fails
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to fetch equipment details.',
+                icon: 'error'
+            });
+        }
+    });
+});
+
+
+</script>
+
+
+<script>
+  $(document).on('click', '#delete_btn', function() {
+    var equipmentId = $(this).data('id');
+    
+    // Show Swal2 confirmation modal
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to delete this item.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send AJAX request to delete the product
+            $.ajax({
+                url: 'functions/delete_product.php',
+                type: 'POST',
+                data: { id: equipmentId },
+                success: function(response) {
+                    // Display success message
+                    const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "info",
+  title: "Deleted!"
+});
+                },
+                error: function(xhr, status, error) {
+                    // Display error message if AJAX request fails
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to delete the item.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+    });
+});
+</script>
+
+<script>
+     $(document).ready(function(){
+        // Function to fetch recent occupied bookings and update the section
+        function fetch_food_menu() {
+            $.ajax({
+                url: 'functions/get_equipment_data.php', // Path to your PHP script fetching recent occupied bookings
+                type: 'GET',
+                success: function(response) {
+                    $('#equipment-tbl').html(response);
+                }
+            });
+        }
+        // Fetch recent occupied bookings every 5 seconds
+        setInterval(fetch_food_menu, 1100); // Change interval as needed
+      });
+
+
+
+
+
+
+</script>
+
+
+<script src="list-count.js"></script>
+ </body>
+</html>

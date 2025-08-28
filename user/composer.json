@@ -1,0 +1,7 @@
+{
+    "require": {
+        "kickstartph/semaphore-client": "^0.5.0",
+        "minishlink/web-push": "^0.2.2",
+        "guzzlehttp/guzzle": "^6.0"
+    }
+}
